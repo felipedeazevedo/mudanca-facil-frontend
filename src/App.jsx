@@ -13,7 +13,7 @@ export default function App() {
                 <Outlet />
             </main>
             <Footer />
-            <Toaster richColors closeButton />
+            <Toaster position="top-right" richColors closeButton />
         </div>
     );
 }

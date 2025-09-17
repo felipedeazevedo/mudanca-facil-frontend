@@ -31,6 +31,11 @@ export default function Login() {
     const [tipo, setTipo] = useState("empresa"); // "empresa" | "cliente"
     const [loading, setLoading] = useState(false);
 
+    const descricao =
+        tipo === "empresa"
+            ? "Autentique-se para gerenciar sua empresa"
+            : "Autentique-se para achar a empresa ideal pra sua mudança";
+
     // Se já tiver token, manda para /home
     useEffect(() => {
         if (token) navigate("/home", { replace: true });
@@ -88,7 +93,7 @@ export default function Login() {
                         <CardTitle className="flex items-center gap-2">
                             <Building2 className="text-orange-500" /> Entrar
                         </CardTitle>
-                        <CardDescription>Autentique-se para gerenciar sua empresa</CardDescription>
+                        <CardDescription>{descricao}</CardDescription>
                     </CardHeader>
                     <CardContent className="grid gap-4">
                         <div className="flex items-center justify-center gap-8 p-3 rounded-xl bg-orange-50">

@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
+import {toast} from "sonner";
 
 export default function CompanyDelete() {
     const { token, empresa } = useAuth();
@@ -15,10 +16,13 @@ export default function CompanyDelete() {
                 headers: { Authorization: `Bearer ${token}` },
             });
             if (!res.ok) throw new Error(await res.text());
-            alert("✅ Conta excluída com sucesso. Faça login novamente se necessário.");
+
+            toast.success("Conta excluida com sucesso!", {
+                description: "Você será redirecionado para o login.",
+            });
             localStorage.removeItem("mf_token");
             localStorage.removeItem("mf_empresa");
-            window.location.href = "/login";
+            setTimeout(() => (window.location.href = "/login"), 800);
         } catch (e) {
             alert("❌ " + (e.message || "Erro ao excluir"));
         }
