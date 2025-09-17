@@ -2,6 +2,7 @@ import React from "react";
 import { Outlet, Link, useLocation } from "react-router-dom";
 import Header from "./components/layout/Header";
 import Footer from "./components/layout/Footer";
+import { Toaster } from "sonner";
 
 export default function App() {
     const { pathname } = useLocation();
@@ -12,6 +13,7 @@ export default function App() {
                 <Outlet />
             </main>
             <Footer />
+            <Toaster richColors closeButton />
         </div>
     );
 }

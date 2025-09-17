@@ -5,6 +5,8 @@ import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
 import CompanyEdit from "./pages/Company/Edit";
 import CompanyCompleteProfile from "./pages/Company/CompleteProfile";
+import ClienteEdit from "./pages/Client/Edit";
+import ClienteDelete from "./pages/Client/Delete";
 import CompanyDelete from "./pages/Company/Delete";
 import { useAuth } from "./context/AuthContext";
 import Home from "./pages/Dashboard/Home";
@@ -30,6 +32,13 @@ const router = createBrowserRouter([
                     { path: "editar", element: <PrivateRoute><CompanyEdit /></PrivateRoute> },
                     { path: "complementar", element: <PrivateRoute><CompanyCompleteProfile /></PrivateRoute> },
                     { path: "excluir", element: <PrivateRoute><CompanyDelete /></PrivateRoute> },
+                ],
+            },
+            {
+                path: "cliente",
+                children: [
+                    { path: "editar", element: <PrivateRoute><ClienteEdit /></PrivateRoute> },
+                    { path: "excluir", element: <PrivateRoute><ClienteDelete /></PrivateRoute> },
                 ],
             },
         ],

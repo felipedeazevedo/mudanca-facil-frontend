@@ -7,21 +7,31 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Building2, LogIn, User2 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
+import { toast } from "sonner"
 import { api } from "../../services/api";
 import { useNavigate } from "react-router-dom";
 
 const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
+function getBackendMessage(e) {
+    try {
+        const parsed = JSON.parse(e?.message);
+        return parsed?.detail || parsed?.message || e?.message || "Erro ao logar";
+    } catch {
+        return e?.message || "Erro ao logar";
+    }
+}
+
 export default function Login() {
-    const { token, login, setEmpresa } = useAuth();
+    const { token, login } = useAuth();
     const navigate = useNavigate();
 
     const [email, setEmail] = useState("");
     const [senha, setSenha] = useState("");
-    const [tipo, setTipo] = useState("empresa");
+    const [tipo, setTipo] = useState("empresa"); // "empresa" | "cliente"
     const [loading, setLoading] = useState(false);
 
-    // se já tiver token, manda para home
+    // Se já tiver token, manda para /home
     useEffect(() => {
         if (token) navigate("/home", { replace: true });
     }, [token, navigate]);
@@ -35,23 +45,27 @@ export default function Login() {
                 method: "POST",
                 body: JSON.stringify({ email, senha }),
             });
-            login(res.accessToken, null);
 
-            // 2) busca os dados da empresa logada e guarda no contexto
-            const me = await fetch(`${BASE_URL}/empresas/me`, {
+            // 2) busca perfil conforme o tipo selecionado
+            const meEndpoint = tipo === "empresa" ? "/empresas/me" : "/clientes/me";
+            const me = await fetch(`${BASE_URL}${meEndpoint}`, {
                 headers: { Authorization: `Bearer ${res.accessToken}` },
             }).then((r) => {
                 if (!r.ok) throw new Error("Falha ao obter perfil");
                 return r.json();
             });
 
-            setEmpresa(me);
-            localStorage.setItem("mf_empresa", JSON.stringify(me));
+            // 3) salva no contexto com o tipo correto (isso já persiste no localStorage)
+            login(res.accessToken, { tipo, perfil: me });
 
-            alert("✅ Login efetuado!");
+            toast.success("Login efetuado!", {
+                description: "Você será redirecionado para a home.",
+            });
+
+            // 4) redireciona para /home (sempre)
             navigate("/home", { replace: true });
         } catch (e) {
-            alert("❌ " + (e.message || "Erro ao logar"));
+            toast.error("Falha no login", { description: getBackendMessage(e) });
         } finally {
             setLoading(false);
         }
@@ -98,7 +112,7 @@ export default function Login() {
                                 id="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                placeholder="empresa@dominio.com"
+                                placeholder="Digite aqui seu email"
                             />
                         </div>
                         <div className="grid gap-2">
